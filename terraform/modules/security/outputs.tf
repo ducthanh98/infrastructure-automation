@@ -5,3 +5,7 @@ output "eks_cluster_sg" {
 output "eks_worker_sg" {
   value = aws_security_group.eks_worker_sg.id
 }
+
+output "bastion_sg" {
+  value = aws_security_group.bastion_sg.id
+}

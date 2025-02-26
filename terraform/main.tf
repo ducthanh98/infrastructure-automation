@@ -30,20 +30,27 @@ module "iam" {
   source = "./modules/iam"
 }
 
-module "eks" {
-  source = "./modules/kubernetes"
-
-  vpc_id = module.network.vpc_id
-  region = var.aws_region
+module "ec2" {
+  source = "./modules/ec2"
   project_id = "jaeger"
-
+  bastion_sg = module.security.bastion_sg
+  public_subnets = module.network.public_subnets
   private_subnets = module.network.private_subnets
-
-  eks_cluster_role_arn = module.iam.eks_cluster_role_arn
-  eks_worker_role_arn = module.iam.eks_worker_role_arn 
-  eks_cluster_sg = [module.security.eks_cluster_sg]
-  eks_worker_sg = [module.security.eks_worker_sg]
-
-
+  bastion_eip = module.eip.bastion_eip
 }
+
+//module "eks" {
+//  source = "./modules/kubernetes"
+
+//  vpc_id = module.network.vpc_id
+//  region = var.aws_region
+//  project_id = "jaeger"
+
+//  private_subnets = module.network.private_subnets
+
+//  eks_cluster_role_arn = module.iam.eks_cluster_role_arn
+//  eks_worker_role_arn = module.iam.eks_worker_role_arn 
+//  eks_cluster_sg = [module.security.eks_cluster_sg]
+//  eks_worker_sg = [module.security.eks_worker_sg]
+//}
 

@@ -221,6 +221,7 @@ resource "aws_security_group" "eks_worker_sg" {
     to_port         = 65535
     protocol        = "tcp"
     self = true
+    cidr_blocks = [] 
   }
 
   # Pod communication
@@ -229,6 +230,7 @@ resource "aws_security_group" "eks_worker_sg" {
     to_port         = 10255
     protocol        = "tcp"
     self = true
+    cidr_blocks = [] 
   }
 
   ingress {
@@ -236,6 +238,7 @@ resource "aws_security_group" "eks_worker_sg" {
     to_port         = 32767
     protocol        = "tcp"
     self = true
+    cidr_blocks = [] 
   }
 
   egress {
@@ -263,5 +266,27 @@ resource "aws_security_group_rule" "allow_cluster_access_worker" {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    source_security_group_id = aws_security_group.eks_worker_sg.id
+    source_security_group_id = aws_security_group.eks_cluster_sg.id
+}
+
+
+# Ec2 Bastion SG
+
+resource "aws_security_group" "bastion_sg" {
+  name   = "bastion-sg"
+  vpc_id = var.vpc_id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Chỉ cho phép IP cụ thể truy cập SSH
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
